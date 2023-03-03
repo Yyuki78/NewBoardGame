@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class AttributeDetermination : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class AttributeDetermination : MonoBehaviour
 
     void Start()
     {
+        if (GameInfomation.AttributeNum == null)
+            GameInfomation.AttributeNum = new int[10];
         Application.targetFrameRate = 60;
         SetState(AttributeState.First);
     }
@@ -60,6 +63,7 @@ public class AttributeDetermination : MonoBehaviour
                 break;
             case AttributeState.Finish:
                 GameInfomation.AttributeNum = attributeNum;
+                SceneManager.LoadScene("GameScene");
                 break;
         }
     }

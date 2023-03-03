@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class GameInfomation : MonoBehaviour
 {
-    public static int[] AttributeNum = new int[10];
+    public static int[] AttributeNum;
 }
