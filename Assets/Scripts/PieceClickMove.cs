@@ -5,6 +5,7 @@ using UnityEngine;
 public class PieceClickMove : MonoBehaviour
 {
     [SerializeField] GameManager _manager;
+    [SerializeField] TileManager _tile;
     private PieceInfomation _info;
 
     private bool Decided = false;
@@ -26,12 +27,18 @@ public class PieceClickMove : MonoBehaviour
                 _manager.MinusAttribute(_info);
                 break;
             case GameManager.GameState.Move:
+                if (!_info.Side) return;
+                //
+                _tile.CheckMove(_info);
                 break;
             case GameManager.GameState.Attack:
+                if (!_info.Side) return;
                 break;
             case GameManager.GameState.EnemyMove:
+                if (_info.Side) return;
                 break;
             case GameManager.GameState.EnemyAttack:
+                if (_info.Side) return;
                 break;
             default:
                 Debug.Log("ƒNƒŠƒbƒN‚µ‚Ä‚àˆÓ–¡‚Ì‚È‚¢State‚Å‚·");

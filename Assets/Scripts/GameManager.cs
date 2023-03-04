@@ -38,6 +38,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] Sprite[] diceImages;
     [SerializeField] Image CurrentDiceImage;
 
+    [SerializeField] GameObject AttributeDecision;
+    [SerializeField] GameObject GameStartText;
+
+    [SerializeField] GameObject DiceRoll;
+
     void Awake()
     {
         if (GameInfomation.AttributeNum == null)
@@ -87,15 +92,25 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case GameState.AttributeAssignment:
+                AttributeDecision.SetActive(true);
                 break;
             case GameState.StartGame:
                 Debug.Log("ÉQÅ[ÉÄÇénÇﬂÇ‹Ç∑");
+                StartCoroutine(GameStart());
                 break;
             case GameState.DiceRoll:
+                _turnText.text = TurnText[1];
+                _phaseText.text = PhaseText[1];
+                _explanationText.text = ExplanationText[1];
+                DiceRoll.SetActive(true);
                 break;
             case GameState.Move:
+                _phaseText.text = PhaseText[2];
+                _explanationText.text = ExplanationText[2];
                 break;
             case GameState.Attack:
+                _phaseText.text = PhaseText[3];
+                _explanationText.text = ExplanationText[3];
                 break;
             case GameState.Finish:
                 break;
@@ -144,6 +159,46 @@ public class GameManager : MonoBehaviour
         if (blueNum <= 0 && redNum <= 0 && greenNum <= 0)
         {
             SetState(GameState.StartGame);
+        }
+    }
+
+    private IEnumerator GameStart()
+    {
+        AttributeDecision.SetActive(false);
+        GameStartText.SetActive(true);
+        _turnText.gameObject.SetActive(false);
+        _phaseText.gameObject.SetActive(false);
+        _explanationText.gameObject.SetActive(false);
+        yield return new WaitForSeconds(3f);
+        GameStartText.SetActive(false);
+        _turnText.gameObject.SetActive(true);
+        _phaseText.gameObject.SetActive(true);
+        _explanationText.gameObject.SetActive(true);
+        SetState(GameState.DiceRoll);
+        yield break;
+    }
+
+    public void GoMove()
+    {
+        if (_currentState == GameState.DiceRoll)
+        {
+            SetState(GameState.Move);
+        }
+        if (_currentState == GameState.EnemyDiceRoll)
+        {
+            SetState(GameState.EnemyMove);
+        }
+    }
+
+    public void GoAttack()
+    {
+        if (_currentState == GameState.Move)
+        {
+            SetState(GameState.Attack);
+        }
+        if (_currentState == GameState.EnemyMove)
+        {
+            SetState(GameState.EnemyAttack);
         }
     }
 

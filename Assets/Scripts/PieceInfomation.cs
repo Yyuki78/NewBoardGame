@@ -8,7 +8,7 @@ public class PieceInfomation : MonoBehaviour
     public int Role;//0‚Í•à•º,1‚Í‹RŽm,2‚Í–‚–@•º,3‚Í‹R”n,4‚ÍŽwŠöŠ¯
     public int HP { get; private set; }
     public int Attribute { get; private set; }
-    public Vector2 CurrentPosition { get; private set; }
+    public Vector2 CurrentPosition;
     public bool CanAttack { get; private set; }
     
     private SpriteRenderer[] PieceImage;
@@ -39,5 +39,11 @@ public class PieceInfomation : MonoBehaviour
                 PieceImage[1].color = Color.blue;
                 break;
         }
+    }
+
+    public void Move(Vector2 newPos)
+    {
+        CurrentPosition = newPos;
+        transform.position = new Vector3((newPos.x - 4) * 1.33f, (4 - newPos.y) * 1.33f, 0);
     }
 }
