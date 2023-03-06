@@ -27,10 +27,12 @@ public class PieceClickMove : MonoBehaviour
                 _manager.MinusAttribute(_info);
                 break;
             case GameManager.GameState.Move:
+                _tile.ShowStatus(_info);
                 if (!_info.Side) return;
                 _tile.CheckMove(_info);
                 break;
             case GameManager.GameState.Attack:
+                _tile.ShowStatus(_info);
                 if (_info.Side)
                 {
                     if (!_info.CanAttack) return;
@@ -42,10 +44,12 @@ public class PieceClickMove : MonoBehaviour
                 }
                 break;
             case GameManager.GameState.EnemyMove:
+                _tile.ShowStatus(_info);
                 if (_info.Side) return;
                 _tile.CheckMove(_info);
                 break;
             case GameManager.GameState.EnemyAttack:
+                _tile.ShowStatus(_info);
                 if (!_info.Side)
                 {
                     if (!_info.CanAttack) return;

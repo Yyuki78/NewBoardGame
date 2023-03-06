@@ -92,7 +92,7 @@ public class PieceInfomation : MonoBehaviour
             HPBar.SetActive(true);
         HP -= num;
         HPBar.transform.localScale = new Vector3(HP / 100f, 1, 1);
-        if (HP < 0)
+        if (HP <= 0)
         {
             gameObject.SetActive(false);
         }

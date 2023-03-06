@@ -8,17 +8,30 @@ public class TileManager : MonoBehaviour
     public bool isGameFinish { get; private set; } = false;
     public bool isWinSide { get; private set; } = false;
 
+    private int pieceDownCount = 0;
+    private bool isHalfPieceDown = false;
+
     [SerializeField] DiceRoll _diceRoll;
     private TileInfomation[] _tiles = new TileInfomation[49];
     private PieceInfomation[] _allPieceInfos = new PieceInfomation[22];
     private PieceInfomation _pieceInfo;
     private int TileNumber;
     [SerializeField] TextMeshProUGUI _pieceInfoText;
+    [SerializeField] GameObject HalfNotifyText;
 
     void Awake()
     {
         _tiles = GetComponentsInChildren<TileInfomation>();
         _allPieceInfos = GetComponentsInChildren<PieceInfomation>();
+        _pieceInfoText.gameObject.SetActive(false);
+        HalfNotifyText.SetActive(false);
+    }
+
+    public void ShowStatus(PieceInfomation _info)
+    {
+        if (!_pieceInfoText.gameObject.activeSelf)
+            _pieceInfoText.gameObject.SetActive(true);
+        _pieceInfoText.text = "ãÓÇÃèÓïÒ\nHP:" + _info.HP + "\nçUåÇ:" + _info.Attack + "\nñhå‰:" + _info.Defense + "\nñÇñ@ñhå‰:" + _info.MagicDefense;
     }
 
     public void CheckMove(PieceInfomation _info)
@@ -49,6 +62,31 @@ public class TileManager : MonoBehaviour
                 //ç∂
                 if (pos.x != 1)
                     _tiles[TileNumber - 1].Blinking();
+                if (!isHalfPieceDown) return;//îºï™ÇÃãÓÇ™ì|ÇÍÇΩÇ©Ç«Ç§Ç©
+                //âEè„
+                if (pos.y != 1 && pos.x != 7)
+                    _tiles[TileNumber - 6].Blinking();
+                //âEâ∫
+                if (pos.y != 7 && pos.x != 7)
+                    _tiles[TileNumber + 8].Blinking();
+                //ç∂è„
+                if (pos.y != 1 && pos.x != 1)
+                    _tiles[TileNumber - 8].Blinking();
+                //ç∂â∫
+                if (pos.y != 7 && pos.x != 1)
+                    _tiles[TileNumber + 6].Blinking();
+                //è„è„
+                if (pos.y > 2)
+                    _tiles[TileNumber - 14].Blinking();
+                //â∫â∫
+                if (pos.y < 6)
+                    _tiles[TileNumber + 14].Blinking();
+                //âEâE
+                if (pos.x < 6)
+                    _tiles[TileNumber + 2].Blinking();
+                //ç∂ç∂
+                if (pos.x > 2)
+                    _tiles[TileNumber - 2].Blinking();
                 break;
             case 3://é©ï™Ç©ÇÁÉjÉ}ÉXÇ≈ìÆÇØÇÈîÕàÕ
                 //è„
@@ -87,6 +125,8 @@ public class TileManager : MonoBehaviour
                 //ç∂ç∂
                 if (pos.x > 2)
                     _tiles[TileNumber - 2].Blinking();
+                if (!isHalfPieceDown) return;//îºï™ÇÃãÓÇ™ì|ÇÍÇΩÇ©Ç«Ç§Ç©
+
                 break;
             case 4://é©ï™ÇÃé¸àÕàÍÉ}ÉX(éŒÇﬂÇ‡ä‹Çﬁ)
                 //è„
@@ -113,6 +153,19 @@ public class TileManager : MonoBehaviour
                 //ç∂â∫
                 if (pos.y != 7 && pos.x != 1)
                     _tiles[TileNumber + 6].Blinking();
+                if (!isHalfPieceDown) return;//îºï™ÇÃãÓÇ™ì|ÇÍÇΩÇ©Ç«Ç§Ç©
+                //è„è„
+                if (pos.y > 2)
+                    _tiles[TileNumber - 14].Blinking();
+                //â∫â∫
+                if (pos.y < 6)
+                    _tiles[TileNumber + 14].Blinking();
+                //âEâE
+                if (pos.x < 6)
+                    _tiles[TileNumber + 2].Blinking();
+                //ç∂ç∂
+                if (pos.x > 2)
+                    _tiles[TileNumber - 2].Blinking();
                 break;
         }
     }
@@ -199,10 +252,6 @@ public class TileManager : MonoBehaviour
                     _tiles[TileNumber + 6].ColorChangeRed();
                 break;
         }
-
-        if (!_pieceInfoText.gameObject.activeSelf)
-            _pieceInfoText.gameObject.SetActive(true);
-        _pieceInfoText.text = "ãÓÇÃèÓïÒ\nHP:" + _pieceInfo.HP + "\nçUåÇ:" + _pieceInfo.Attack + "\nñhå‰:" + _pieceInfo.Defense + "\nñÇñ@ñhå‰:" + _pieceInfo.MagicDefense;
     }
 
     public void AttackPiece(PieceInfomation _enemyInfo)
@@ -259,16 +308,23 @@ public class TileManager : MonoBehaviour
         HitNum *= (Attack / Defence);
 
         _enemyInfo.Attacked((int)HitNum);
-        if(_enemyInfo.HP < 0)
+        if(_enemyInfo.HP <= 0)
         {
+            pieceDownCount++;
             _tiles[TileNumber].ExistPiece = false;
             if (_enemyInfo.Role == 4)
             {
+                HalfNotifyText.SetActive(false);
                 isGameFinish = true;
                 if (_enemyInfo.Side)
                     isWinSide = false;
                 else
                     isWinSide = true;
+            }
+            if (pieceDownCount == 11)
+            {
+                isHalfPieceDown = true;
+                HalfNotifyText.SetActive(true);
             }
         }
         Debug.Log("çUåÇÇµÇ‹ÇµÇΩ" + HitNum);
