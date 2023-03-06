@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class GameManager : MonoBehaviour
         GameFinish
     }
     public GameState _currentState { private set; get; }
+
+    [SerializeField] int TurnNum = 0;
 
     [SerializeField] TextMeshProUGUI _turnText;
     [SerializeField] TextMeshProUGUI _phaseText;
@@ -42,9 +45,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject GameStartText;
 
     [SerializeField] GameObject DiceRoll;
+    [SerializeField] GameObject TurnFinishButton;
+    [SerializeField] TextMeshProUGUI _turnNumText;
+
+    [SerializeField] TileManager _tileManager;
+    [SerializeField] GameObject GameFinish;
 
     void Awake()
     {
+        Application.targetFrameRate = 60;
         if (GameInfomation.AttributeNum == null)
         {
             GameInfomation.AttributeNum = new int[10];
@@ -109,18 +118,34 @@ public class GameManager : MonoBehaviour
                 _explanationText.text = ExplanationText[2];
                 break;
             case GameState.Attack:
+                DiceRoll.SetActive(false);
                 _phaseText.text = PhaseText[3];
                 _explanationText.text = ExplanationText[3];
+                TurnFinishButton.SetActive(true);
                 break;
             case GameState.Finish:
+                SetState(GameState.EnemyDiceRoll);
                 break;
             case GameState.EnemyDiceRoll:
+                _turnText.text = TurnText[2];
+                _phaseText.text = PhaseText[1];
+                _explanationText.text = ExplanationText[1];
+                DiceRoll.SetActive(true);
                 break;
             case GameState.EnemyMove:
+                _phaseText.text = PhaseText[2];
+                _explanationText.text = ExplanationText[2];
                 break;
             case GameState.EnemyAttack:
+                DiceRoll.SetActive(false);
+                _phaseText.text = PhaseText[3];
+                _explanationText.text = ExplanationText[3];
+                TurnFinishButton.SetActive(true);
                 break;
             case GameState.EnemyFinish:
+                TurnNum++;
+                _turnNumText.text = "ターン:" + TurnNum;
+                SetState(GameState.DiceRoll);
                 break;
             case GameState.GameFinish:
                 break;
@@ -169,11 +194,14 @@ public class GameManager : MonoBehaviour
         _turnText.gameObject.SetActive(false);
         _phaseText.gameObject.SetActive(false);
         _explanationText.gameObject.SetActive(false);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
         GameStartText.SetActive(false);
         _turnText.gameObject.SetActive(true);
         _phaseText.gameObject.SetActive(true);
         _explanationText.gameObject.SetActive(true);
+        _turnNumText.gameObject.SetActive(true);
+        TurnNum++;
+        _turnNumText.text = "ターン:" + TurnNum;
         SetState(GameState.DiceRoll);
         yield break;
     }
@@ -202,8 +230,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Update()
+    public void OnClickTurnFinish()
     {
-        
+        TurnFinishButton.SetActive(false);
+        _tileManager.TurnFinish();
+        if (_tileManager.isGameFinish)
+        {
+            GameFinishEffect();
+            return;
+        }
+        if (_currentState == GameState.Attack)
+        {
+            SetState(GameState.Finish);
+        }
+        if (_currentState == GameState.EnemyAttack)
+        {
+            SetState(GameState.EnemyFinish);
+        }
+    }
+
+    private void GameFinishEffect()
+    {
+        Debug.Log("ゲーム終了　勝ったのは" + _tileManager.isWinSide);
+        GameFinish.SetActive(true);
+    }
+
+    public void OnClickOneMoreGame()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 }

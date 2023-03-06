@@ -28,17 +28,33 @@ public class PieceClickMove : MonoBehaviour
                 break;
             case GameManager.GameState.Move:
                 if (!_info.Side) return;
-                //
                 _tile.CheckMove(_info);
                 break;
             case GameManager.GameState.Attack:
-                if (!_info.Side) return;
+                if (_info.Side)
+                {
+                    if (!_info.CanAttack) return;
+                    _tile.CheckAttack(_info);
+                }
+                else
+                {
+                    _tile.AttackPiece(_info);
+                }
                 break;
             case GameManager.GameState.EnemyMove:
                 if (_info.Side) return;
+                _tile.CheckMove(_info);
                 break;
             case GameManager.GameState.EnemyAttack:
-                if (_info.Side) return;
+                if (!_info.Side)
+                {
+                    if (!_info.CanAttack) return;
+                    _tile.CheckAttack(_info);
+                }
+                else
+                {
+                    _tile.AttackPiece(_info);
+                }
                 break;
             default:
                 Debug.Log("ƒNƒŠƒbƒN‚µ‚Ä‚àˆÓ–¡‚Ì‚È‚¢State‚Å‚·");

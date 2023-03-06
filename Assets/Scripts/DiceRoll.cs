@@ -9,7 +9,7 @@ public class DiceRoll : MonoBehaviour
     public int MoveNum = 0;
 
     private bool isGacha = false;
-    [SerializeField] int spritePerFrame = 12;
+    [SerializeField] int spritePerFrame = 6;
 
     private int index = 0;
     private int frame = 0;
@@ -44,13 +44,13 @@ public class DiceRoll : MonoBehaviour
     {
         DiceRollButton.SetActive(true);
         _text.gameObject.SetActive(false);
-        spritePerFrame = 12;
+        spritePerFrame = 6;
     }
 
     private void OnDisable()
     {
         _text.gameObject.SetActive(false);
-        spritePerFrame = 12;
+        spritePerFrame = 6;
     }
 
     public void OnClick()
@@ -66,11 +66,11 @@ public class DiceRoll : MonoBehaviour
         _text.text = "écÇËà⁄ìÆâÒêî:0";
         index = Random.Range(0, dices.Length);
         yield return new WaitForSeconds(0.5f);
-        spritePerFrame += 12;
+        spritePerFrame += 6;
         yield return new WaitForSeconds(0.5f);
-        spritePerFrame += 12;
+        spritePerFrame += 6;
         yield return new WaitForSeconds(0.5f);
-        spritePerFrame += 12;
+        spritePerFrame += 6;
         yield return new WaitForSeconds(0.5f);
         isGacha = false;
         yield return null;

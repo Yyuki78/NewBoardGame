@@ -8,13 +8,14 @@ public class TileInfomation : MonoBehaviour
     public Vector2 myPosition => MyPosition;
     public bool ExistPiece;
     public bool isBlinking { get; private set; } = false;
+    public bool isColorChange { get; private set; } = false;
 
     private TileManager _manager;
 
     private SpriteRenderer _sprite;
     private Color oldColor;
     private bool plus = false;
-    private Color changeValue = new Color(0, 0, 0, 0.004f);
+    private Color changeValue = new Color(0, 0, 0, 0.02f);
 
     void Start()
     {
@@ -46,7 +47,7 @@ public class TileInfomation : MonoBehaviour
         if (ExistPiece) return;
         if (isBlinking) return;
         isBlinking = true;
-        Debug.Log(MyPosition + "Ç™åıÇËÇ‹Ç∑");
+        //Debug.Log(MyPosition + "Ç™åıÇËÇ‹Ç∑");
     }
 
     public void StopBlinking()
@@ -56,9 +57,29 @@ public class TileInfomation : MonoBehaviour
         _sprite.color = oldColor;
     }
 
+    public void ColorChangeRed()
+    {
+        if (isBlinking) return;
+        if (isColorChange) return;
+        isBlinking = true;
+        isColorChange = true;
+        _sprite.color = Color.red;
+        //Debug.Log(MyPosition + "Ç™ê‘Ç≠åıÇËÇ‹Ç∑");
+    }
+
+    public void ColorChangeBefore()
+    {
+        if (!isBlinking) return;
+        if (!isColorChange) return;
+        isBlinking = false;
+        isColorChange = false;
+        _sprite.color = oldColor;
+    }
+
     public void OnMouseDown()
     {
         if (!isBlinking) return;
+        if (isColorChange) return;
         _manager.MovePiece(myPosition);
         ExistPiece = true;
     }
